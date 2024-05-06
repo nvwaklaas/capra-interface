@@ -38,14 +38,6 @@ def test_stop_robot(client):
     assert response.json() == {"message": "Robot stopped"}
 
 
-def test_connect_to_robot(client):
-    """Testing if connection to the robot works when on Capra Hircus Wifi"""
-    response = client.get("/connect_to_robot")
-    assert response.status_code == 200
-    assert response.json() == {
-        "message": "Successfully connected to the robot"}
-
-
 def test_connection_failed(client):
     """Testing if the correct error message is returned when connection to the robot failed"""
     response = client.get("/connect_to_robot")
