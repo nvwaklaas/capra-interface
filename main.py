@@ -74,6 +74,7 @@ class InstructionResponse(InstructionCreate):
     """Instruction Response code"""
     id: int
 
+
 # API endpoints
 
 

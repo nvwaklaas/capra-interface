@@ -3,6 +3,8 @@ from unittest.mock import MagicMock
 import pytest
 from capra_control import ControlCapra
 
+# pylint: disable=line-too-long
+
 
 @pytest.fixture(name="mqtt_client")
 def mock_mqtt_client():
