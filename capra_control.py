@@ -16,7 +16,9 @@ R = 6371.0
 
 
 class ControlCapra():
-    """Class for controlling a Capra Hircus"""
+    """
+    Class for controlling a Capra Hircus using MQTT Protocol
+    """
 
     def __init__(self, broker_address: str, broker_port: int) -> None:
         self.broker_address = broker_address
@@ -27,7 +29,7 @@ class ControlCapra():
         logging.basicConfig()
         self.logger.setLevel(logging.INFO)
 
-    def connect_to_robot(self):
+    def connect_to_robot(self) -> None:
         """Establishes connection to Capra Hircus"""
         try:
             self.client.connect(self.broker_address, self.broker_port)
@@ -48,6 +50,8 @@ class ControlCapra():
         ABORTING=3\n
         ABORTED=4\n
         PAUSED=5
+
+        Modes are used to send different types of instructions to the robot.
         """
 
         mode = '{"operation_mode": %d}' % (mode)
@@ -60,7 +64,11 @@ class ControlCapra():
 
     @staticmethod
     def load_path_file(filename: str) -> dict:
-        """load_path_file() loads a Capra Hircus path file in json format."""
+        """
+        load_path_file() loads a Capra Hircus path file in json format.
+        A Capra Hircus path file can be created using the Capra Commander Mobile application.
+        This mobile application can be found on the official Capra Hircus documentation
+        """
 
         try:
             with open(filename, encoding="utf-8") as f:
@@ -71,7 +79,7 @@ class ControlCapra():
         return data
 
     def send_path(self, filename: str) -> None:
-        """Creates a path for the Capra Hircus to drive."""
+        """Sends a path to drive structured in the format as specified on the Capra Hircus documentation"""
 
         msg = self.load_path_file(filename)
 
@@ -83,8 +91,8 @@ class ControlCapra():
             self.logger.info(
                 "An unexpected error occured during connection: %s.", e)
 
-    def calculate_distance_angle(self, coord_1, coord_2):
-        """Calculates the distance and angle between two coordinates using Haversine"""
+    def calculate_distance_angle(self, coord_1, coord_2) -> dict:
+        """Calculates the distance and angle between two coordinates using the Haversine formula"""
 
         # Convert degrees to radians
         lat1 = math.radians(coord_1[0])
@@ -135,7 +143,7 @@ class ControlCapra():
         return distances
 
     def send_instruction(self, speed, angle: float = 0.0) -> None:
-        """Used for remotely controlling Capra Hircus."""
+        """Used for remotely controlling Capra Hircus using odometry."""
 
         instruction = DrivingInstruction(speed, angle)
 
@@ -147,8 +155,8 @@ class ControlCapra():
             self.logger.error(
                 "An unexpected error occured during connection: %s.", e)
 
-    def remote_control(self, distance: float = 0.1, speed: int = 0, angle=0.0):
-        """Instructs a Capra Hircus robot to drive for a given distance."""
+    def remote_control(self, distance: float = 0.1, speed: int = 0, angle=0.0) -> None:
+        """Instructs a Capra Hircus robot to drive for a given distance, with a given angle and speed."""
         print(speed)
 
         frequency = 0.1  # 10 Hz
