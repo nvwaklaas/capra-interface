@@ -22,8 +22,8 @@ logger.setLevel(logging.INFO)
 Base = declarative_base()
 
 load_dotenv()
-BROKER_ADRRESS = os.getenv('BROKER_ADDRESS')
-BROKER_PORT = int(os.getenv('BROKER_PORT'))
+BROKER_ADRRESS = "10.46.28.1"
+BROKER_PORT = 1883
 controller = ControlCapra(BROKER_ADRRESS, BROKER_PORT)
 
 
@@ -82,7 +82,7 @@ class InstructionResponse(InstructionCreate):
 async def create_instruction(instruction: InstructionCreate):
     """Creates a driving instruction and sends it to the robot"""
     db = SessionLocal()
-    db_instruction = Instruction(**instruction.dict())
+    db_instruction = Instruction(**instruction.model_dump())
     print(db_instruction.speed)
     db.add(db_instruction)
     db.commit()
