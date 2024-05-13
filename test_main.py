@@ -2,7 +2,7 @@
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
-from .main import app, SessionLocal, Instruction
+from main import app, SessionLocal, Instruction
 
 
 @pytest.fixture(name="client")

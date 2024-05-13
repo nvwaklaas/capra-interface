@@ -54,6 +54,8 @@ def test_calculate_distance_angle(controller):
     assert isinstance(result, dict)
     assert "distance" in result
     assert "angle" in result
+    assert result["distance"] == 1431.1784066131183
+    assert result["angle"] == 0.22463952387586225
 
 
 def test_calculate_distances_from_path(controller):
