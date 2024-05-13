@@ -4,6 +4,8 @@ from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
 from main import app, SessionLocal, Instruction
 
+# pylint: disable=line-too-long
+
 
 @pytest.fixture(name="client")
 def test_client():
