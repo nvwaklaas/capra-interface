@@ -4,8 +4,11 @@ This application can be used to control a Capra Hircus robot using Python.
 The application consists of three layers:
 
 - A Vue/Vite front-end
-- A Python FastAPI back-end
-- A Class containing methods for interfacing with a Capra Hircus robot.
+- A Python FastAPI back-end (For more information see: [Capra API Documentation](docs/API.md))
+- A Class containing methods for interfacing with a Capra Hircus robot (For more information see: [Capra Controller Documentation](docs/controller.md)).
+
+Shown below is a screenshot of the application taken May 13th 2024:
+![Screenshot of capra-interface front-end](docs/images/capra_interface_scr.jpg)
 
 ## Requirements
 
@@ -26,9 +29,16 @@ Default credentials are:
 
 **The application is only usable when connected to the WiFi network of the robot.**
 
-After connecting with the WiFi you can press the _'Connect to Robot'_ button in the application:
+After connecting with the WiFi you can press the _'Connect to Robot'_ button in the application
 
-![Screenshot of capra-interface front-end]()
+## Using capra-interface to control a Capra Hircus robot.
+
+After completing the installation steps as described below and connecting to the robot's network, you can use the application to send driving instructions to control the robot.
+
+- _Connect to Robot_ will establish a connection with the robot to be able to control it.
+- _Speed_ allows the user to set the driving speed in meters per second with a limit of 2 m/s.
+- _Distance_ allows the user to set the driving distance in meters.
+- _Steering angle_ allows the user to steer te robot where _1.5_ is the maximum leftward angle and _-0.8_ is the maximum rightward angle.
 
 ## Installation - Back-end
 
