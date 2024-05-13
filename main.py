@@ -1,5 +1,4 @@
 """API Module for controlling a Capra Hircus"""
-import os
 import json
 import logging
 from fastapi import FastAPI, HTTPException, File, UploadFile
