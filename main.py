@@ -37,7 +37,7 @@ class Instruction(Base):
 
 
 # Configure MySQL database
-SQLALCHEMY_DATABASE_URL = f"mysql://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}@localhost/{os.getenv('DB_NAME')}"
+SQLALCHEMY_DATABASE_URL = "sqlite:///./capra_db.db"
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
