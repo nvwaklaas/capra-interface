@@ -52,9 +52,9 @@ def test_get_instruction(client):
     db.add(instruction)
     db.commit()
 
-    response = client.get("/instructions/2")
+    response = client.get("/instructions/1")
     assert response.status_code == 200
-    assert response.json() == {"id": 2, "angle": 0.5,
+    assert response.json() == {"id": 1, "angle": 0.5,
                                "speed": 1, "distance": 10}
 
 
