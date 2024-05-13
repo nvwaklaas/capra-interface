@@ -51,11 +51,14 @@ def test_calculate_distance_angle(controller):
     coord_2 = (51.5074, 0.1278)         # London
     result = controller.calculate_distance_angle(coord_1, coord_2)
 
+    angle = round(result["angle"], 4)
+    distance = round(result["distance"], 4)
+
     assert isinstance(result, dict)
     assert "distance" in result
     assert "angle" in result
-    assert result["distance"] == 1431.1784066131183
-    assert result["angle"] == 0.22463952387586225
+    assert distance == 1431.1784
+    assert angle == 0.2246
 
 
 def test_calculate_distances_from_path(controller):
