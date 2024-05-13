@@ -29,7 +29,7 @@ Default credentials are:
 
 **The application is only usable when connected to the WiFi network of the robot.**
 
-After connecting with the WiFi you can press the _'Connect to Robot'_ button in the application
+After connecting with the WiFi you can click the _'Connect to Robot'_ button in the application
 
 ## Using capra-interface to control a Capra Hircus robot.
 
@@ -64,14 +64,21 @@ Build front-end
 
 ```bash
 cd capra-frontend
+```
+
+```
 npm install
+```
+
+Build TailwindCSS
+
+```
 npx tailwindcss init -p
 ```
 
 Start front-end server
 
-```bash
-cd capra-frontend
+```
 npm run dev
 ```
 
@@ -97,9 +104,9 @@ Below is an example of a path file as specified by documentation:
       "uuid": "Node_0",
       "sequence_number": 0,
       "position": {
-        "x": 52.040360393900656,
-        "y": 5.567137289287426,
-        "z": 53.61400798801333
+        "x": 54.040360393900656,
+        "y": 6.567137289287426,
+        "z": 54.61400798801333
       },
       "actions": [],
       "isIndoor": false
@@ -107,7 +114,7 @@ Below is an example of a path file as specified by documentation:
     {
       "uuid": "Node_1",
       "sequence_number": 1,
-      "position": { "x": 52.04027615536029, "y": 5.567062540014308, "z": 0.0 },
+      "position": { "x": 54.04027615536029, "y": 6.567062540014308, "z": 0.0 },
       "actions": [],
       "isIndoor": false
     }
