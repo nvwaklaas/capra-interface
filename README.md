@@ -24,6 +24,12 @@ Default credentials are:
 - Network: HIRCUS-0027
 - Password: CapraDefaultKey
 
+**The application is only usable when connected to the WiFi network of the robot.**
+
+After connecting with the WiFi you can press the _'Connect to Robot'_ button in the application:
+
+![Screenshot of capra-interface front-end]()
+
 ## Installation - Back-end
 
 To install the Python FastAPI back-end, run the following commands:
@@ -50,6 +56,19 @@ Build front-end
 cd capra-frontend
 npm install
 npx tailwindcss init -p
+```
+
+Start front-end server
+
+```bash
+cd capra-frontend
+npm run dev
+```
+
+Alternatively it is possible to expose the front-end to the local network by using the following command:
+
+```bash
+npm run dev -- --host
 ```
 
 ## Capra Hircus path file
