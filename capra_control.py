@@ -5,7 +5,7 @@ import logging
 import math
 import paho.mqtt.client as mqtt
 from geopy.distance import geodesic
-from .models.driving_instruction import DrivingInstruction
+from models.driving_instruction import DrivingInstruction
 
 TOPIC_SEND_PATH = 'capra/navigation/send_path'
 TOPIC_REMOTE = "capra/remote/direct_velocity"
@@ -131,6 +131,8 @@ class ControlCapra():
                 distances.append(geodesic(coord_1, coord_2).km * 1000)
         except IndexError:
             self.logger.error('Invalid data format in json file.')
+
+        return distances
 
     def send_instruction(self, speed, angle: float = 0.0) -> None:
         """Used for remotely controlling Capra Hircus."""
