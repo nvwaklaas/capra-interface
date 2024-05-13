@@ -10,7 +10,7 @@ from sqlalchemy import create_engine, Column, Integer, Float
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from dotenv import load_dotenv
-from .capra_control import ControlCapra
+from capra_control import ControlCapra
 
 
 # pylint: disable=line-too-long
@@ -109,7 +109,6 @@ def connect_to_robot():
         # Log de foutmelding
         print(f"Error connecting to the robot: {e}")
 
-        # Geef een HTTP-fout terug met een aangepast bericht
         raise HTTPException(
             status_code=500, detail="Failed to connect to Capra Hircus") from e
 
@@ -129,20 +128,17 @@ def get_instruction(instruction_id: int):
 async def upload_json(file: UploadFile = File(...)):
     """Endpoint to upload a JSON file"""
     try:
-        # Controleer of het bestand een JSON-bestand is
+        # Validate if file-format is correct.
         if not file.filename.endswith(".json"):
             return JSONResponse(status_code=400, content={"message": "Uploaded file must be a JSON file"})
 
         # Lees de inhoud van het bestand
         contents = await file.read()
 
-        # Laad de inhoud van het JSON-bestand
         data = json.loads(contents)
 
-        # Voer hier eventuele verdere verwerking uit met de inhoud van het JSON-bestand
-
         return {"message": "JSON file uploaded and processed successfully"}
-    except Exception as e:
+    except FileNotFoundError as e:
         return JSONResponse(status_code=500, content={"message": f"Error processing JSON file: {str(e)}"})
 
 
