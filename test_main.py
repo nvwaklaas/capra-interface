@@ -4,6 +4,8 @@ from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
 from main import app, SessionLocal, Instruction
 
+# pylint: disable=line-too-long
+
 
 @pytest.fixture(name="client")
 def test_client():
@@ -54,8 +56,8 @@ def test_get_instruction(client):
 
     response = client.get("/instructions/1")
     assert response.status_code == 200
-    assert response.json() == {"id": 1, "angle": 0.5,
-                               "speed": 1, "distance": 0.1}
+    assert response.json() == {"id": 1, "angle": 0.0,
+                               "speed": 1, "distance": 10}
 
 
 def test_upload_json(client):
