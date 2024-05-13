@@ -2,6 +2,7 @@
 import json
 import time
 import logging
+import math
 import paho.mqtt.client as mqtt
 from geopy.distance import geodesic
 from .models.driving_instruction import DrivingInstruction
@@ -9,6 +10,9 @@ from .models.driving_instruction import DrivingInstruction
 TOPIC_SEND_PATH = 'capra/navigation/send_path'
 TOPIC_REMOTE = "capra/remote/direct_velocity"
 TOPIC_SET_MODE = "capra/robot/set_operation_mode"
+
+# Radius van de aarde in kilometers
+R = 6371.0
 
 
 class ControlCapra():
@@ -78,6 +82,33 @@ class ControlCapra():
         except ConnectionError as e:
             self.logger.info(
                 "An unexpected error occured during connection: %s.", e)
+
+    def calculate_distance_angle(self, coord_1, coord_2):
+        """Calculates the distance and angle between two coordinates using Haversine"""
+
+        # Convert degrees to radians
+        lat1 = math.radians(coord_1[0])
+        lon1 = math.radians(coord_1[1])
+        lat2 = math.radians(coord_2[0])
+        lon2 = math.radians(coord_2[1])
+
+        # Difference in longitudes and latitudes
+        dlon = lon2 - lon1
+        print(f"dlon: {dlon}")
+        dlat = lat2 - lat1
+        print(f"dlate: {dlat}")
+
+        # Haversine formula
+        a = math.sin(dlat/2)**2 + math.cos(lat1) * \
+            math.cos(lat2) * math.sin(dlon/2)**2
+
+        # Calculating angle between coorindates
+        c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
+
+        # Calculate the distance
+        distance = R * c
+
+        return {"distance": distance, "angle": c}
 
     def calculate_distances_from_path(self, filename: str) -> list:
         """Opens a route file and calculates distance between each node.\n
