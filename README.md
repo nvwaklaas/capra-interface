@@ -10,6 +10,9 @@ The application consists of three layers:
 Shown below is a screenshot of the application taken May 13th 2024:
 ![Screenshot of capra-interface front-end](docs/images/capra_interface_scr.jpg)
 
+Shown below is a class diagram describing the structure of this project as of May 13th 2024:
+![Class diagram of the structure of this project](docs/images/class_diagram.png)
+
 ## Requirements
 
 This project has the following requirements:

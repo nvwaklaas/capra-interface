@@ -1,7 +1,7 @@
 """Route data type"""
 from dataclasses import dataclass
-from capra_webapp.types.edge import Edge
-from capra_webapp.types.node import Node
+from edge import Edge
+from node import Node
 
 
 @dataclass
