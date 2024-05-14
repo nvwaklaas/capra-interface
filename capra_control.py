@@ -160,14 +160,17 @@ class ControlCapra():
             self.logger.error(
                 "An unexpected error occured during connection: %s.", e)
 
-    def remote_control(self, distance: float = 0.1, speed: int = 0, angle=0.0) -> None:
-        """Instructs a Capra Hircus robot to drive for a given distance, with a given angle and speed."""
+    def remote_control(self, distance: float = 0.1, speed: int = 0, angle: float = 0.0) -> None:
+        """
+        Instructs a Capra Hircus robot to drive for a given distance, with a given angle and speed.
+        Instructions should be send at a frenquency of 10 Hertz as specified by Capra documentation.
+        """
 
         frequency = 0.1  # 10 Hz
         distance_covered = 0.0
 
         if speed == 0:
-            # set distance to prevent endless loop.
+            # set distance when speed = 0 to prevent endless loop.
             distance_per_instruction = 0.1
             distance = 0.1
         else:
