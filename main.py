@@ -86,6 +86,8 @@ async def create_instruction(instruction: InstructionCreate):
     db.add(db_instruction)
     db.commit()
     db.refresh(db_instruction)
+
+    # Instruct robot to drive
     controller.mq_set_mode(1)
     controller.remote_control(db_instruction.distance,
                               db_instruction.speed, db_instruction.angle)
@@ -95,6 +97,8 @@ async def create_instruction(instruction: InstructionCreate):
 @app.post("/stop/")
 def stop_robot():
     """Send instruction to the robot to stop driving"""
+
+    # mode 5 = STOPPED
     controller.mq_set_mode(5)
     return {"message": "Robot stopped"}
 

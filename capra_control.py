@@ -7,11 +7,12 @@ import paho.mqtt.client as mqtt
 from geopy.distance import geodesic
 from models.driving_instruction import DrivingInstruction
 
+# pylint: disable=line-too-long
 TOPIC_SEND_PATH = 'capra/navigation/send_path'
 TOPIC_REMOTE = "capra/remote/direct_velocity"
 TOPIC_SET_MODE = "capra/robot/set_operation_mode"
 
-# Radius van de aarde in kilometers
+# Radius of the earth in kilometres
 R = 6371.0
 
 
@@ -147,6 +148,7 @@ class ControlCapra():
 
         instruction = DrivingInstruction(speed, angle)
 
+        # Get instruction as specified by Capra documentation
         msg_json = json.dumps(instruction.get_formatted_instruction())
 
         try:
@@ -163,9 +165,11 @@ class ControlCapra():
         distance_covered = 0.0
 
         if speed == 0:
+            # set distance to prevent endless loop.
             distance_per_instruction = 0.1
             distance = 0.1
         else:
+            # Use absolute value as speed can be negative
             distance_per_instruction = abs(speed) * frequency
 
         # Sends instructions to drive until distance is fully covered.
