@@ -82,6 +82,7 @@ class ControlCapra():
     def send_path(self, filename: str) -> None:
         """Sends a path to drive structured in the format as specified on the Capra Hircus documentation"""
 
+        # Create message to publish to the topic.
         msg = self.load_path_file(filename)
 
         msg_json = json.dumps(msg)
@@ -137,6 +138,8 @@ class ControlCapra():
                 x_2 = data[nodes][i+1][position]["x"]
                 y_2 = data[nodes][i+1][position]["y"]
                 coord_2 = (x_2, y_2)
+
+                # using geopy to calculate distance between coordinates in metres.
                 distances.append(geodesic(coord_1, coord_2).km * 1000)
         except IndexError:
             self.logger.error('Invalid data format in json file.')
@@ -148,7 +151,7 @@ class ControlCapra():
 
         instruction = DrivingInstruction(speed, angle)
 
-        # Get instruction as specified by Capra documentation
+        # Get instruction string as specified by Capra documentation
         msg_json = json.dumps(instruction.get_formatted_instruction())
 
         try:
@@ -159,7 +162,6 @@ class ControlCapra():
 
     def remote_control(self, distance: float = 0.1, speed: int = 0, angle=0.0) -> None:
         """Instructs a Capra Hircus robot to drive for a given distance, with a given angle and speed."""
-        print(speed)
 
         frequency = 0.1  # 10 Hz
         distance_covered = 0.0
