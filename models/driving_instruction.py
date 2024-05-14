@@ -9,16 +9,6 @@ class DrivingInstruction:
     speed: int
     angle: float = 0.0
 
-    # @property
-    # def speed(self) -> int:
-    #     """Speed at which the Capra Hircus drives (m/s)"""
-    #     return self.speed
-
-    # @speed.setter
-    # def speed(self, value: int) -> None:
-    #     if not -2 <= value <= 2:
-    #         raise ValueError("Speed must be between -2 and 2")
-
     def get_formatted_instruction(self):
         """Returns a driving instruction in the correct format for Capra Hircus"""
 

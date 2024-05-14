@@ -121,7 +121,10 @@ Used for remotely controlling Capra Hircus using odometry.
 ## remote_control
 
 ```python
-def remote_control(distance: float = 0.1, speed: int = 0, angle=0.0) -> None
+def remote_control(distance: float = 0.1,
+                   speed: int = 0,
+                   angle: float = 0.0) -> None
 ```
 
 Instructs a Capra Hircus robot to drive for a given distance, with a given angle and speed.
+Instructions should be send at a frenquency of 10 Hertz as specified by Capra documentation.

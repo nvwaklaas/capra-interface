@@ -1,4 +1,5 @@
-"""Pytest testcases for testing the ControlCapra class"""
+"""Pytest testcases for testing the ControlCapra class using MagicMock.
+MagicMock is used to be able to test ControlCapra without needing a connection to the robot"""
 from unittest.mock import MagicMock
 import pytest
 from capra_control import ControlCapra

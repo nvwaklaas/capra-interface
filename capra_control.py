@@ -7,11 +7,12 @@ import paho.mqtt.client as mqtt
 from geopy.distance import geodesic
 from models.driving_instruction import DrivingInstruction
 
+# pylint: disable=line-too-long
 TOPIC_SEND_PATH = 'capra/navigation/send_path'
 TOPIC_REMOTE = "capra/remote/direct_velocity"
 TOPIC_SET_MODE = "capra/robot/set_operation_mode"
 
-# Radius van de aarde in kilometers
+# Radius of the earth in kilometres
 R = 6371.0
 
 
@@ -81,6 +82,7 @@ class ControlCapra():
     def send_path(self, filename: str) -> None:
         """Sends a path to drive structured in the format as specified on the Capra Hircus documentation"""
 
+        # Create message to publish to the topic.
         msg = self.load_path_file(filename)
 
         msg_json = json.dumps(msg)
@@ -136,6 +138,8 @@ class ControlCapra():
                 x_2 = data[nodes][i+1][position]["x"]
                 y_2 = data[nodes][i+1][position]["y"]
                 coord_2 = (x_2, y_2)
+
+                # using geopy to calculate distance between coordinates in metres.
                 distances.append(geodesic(coord_1, coord_2).km * 1000)
         except IndexError:
             self.logger.error('Invalid data format in json file.')
@@ -147,6 +151,7 @@ class ControlCapra():
 
         instruction = DrivingInstruction(speed, angle)
 
+        # Get instruction string as specified by Capra documentation
         msg_json = json.dumps(instruction.get_formatted_instruction())
 
         try:
@@ -155,17 +160,21 @@ class ControlCapra():
             self.logger.error(
                 "An unexpected error occured during connection: %s.", e)
 
-    def remote_control(self, distance: float = 0.1, speed: int = 0, angle=0.0) -> None:
-        """Instructs a Capra Hircus robot to drive for a given distance, with a given angle and speed."""
-        print(speed)
+    def remote_control(self, distance: float = 0.1, speed: int = 0, angle: float = 0.0) -> None:
+        """
+        Instructs a Capra Hircus robot to drive for a given distance, with a given angle and speed.
+        Instructions should be send at a frenquency of 10 Hertz as specified by Capra documentation.
+        """
 
         frequency = 0.1  # 10 Hz
         distance_covered = 0.0
 
         if speed == 0:
+            # set distance when speed = 0 to prevent endless loop.
             distance_per_instruction = 0.1
             distance = 0.1
         else:
+            # Use absolute value as speed can be negative
             distance_per_instruction = abs(speed) * frequency
 
         # Sends instructions to drive until distance is fully covered.

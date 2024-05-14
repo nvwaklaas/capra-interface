@@ -8,7 +8,6 @@ from pydantic import BaseModel
 from sqlalchemy import create_engine, Column, Integer, Float
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from dotenv import load_dotenv
 from capra_control import ControlCapra
 
 
@@ -20,7 +19,6 @@ logger.setLevel(logging.INFO)
 # Define SQLAlchemy models
 Base = declarative_base()
 
-load_dotenv()
 BROKER_ADRRESS = "10.46.28.1"
 BROKER_PORT = 1883
 controller = ControlCapra(BROKER_ADRRESS, BROKER_PORT)
@@ -80,12 +78,16 @@ class InstructionResponse(InstructionCreate):
 @app.post("/drive/", response_model=InstructionResponse)
 async def create_instruction(instruction: InstructionCreate):
     """Creates a driving instruction and sends it to the robot"""
+
+    # Store instruction
     db = SessionLocal()
     db_instruction = Instruction(**instruction.model_dump())
     print(db_instruction.speed)
     db.add(db_instruction)
     db.commit()
     db.refresh(db_instruction)
+
+    # Instruct robot to drive
     controller.mq_set_mode(1)
     controller.remote_control(db_instruction.distance,
                               db_instruction.speed, db_instruction.angle)
@@ -95,6 +97,8 @@ async def create_instruction(instruction: InstructionCreate):
 @app.post("/stop/")
 def stop_robot():
     """Send instruction to the robot to stop driving"""
+
+    # mode 5 = STOPPED
     controller.mq_set_mode(5)
     return {"message": "Robot stopped"}
 
@@ -132,7 +136,7 @@ async def upload_json(file: UploadFile = File(...)):
         if not file.filename.endswith(".json"):
             return JSONResponse(status_code=400, content={"message": "Uploaded file must be a JSON file"})
 
-        # Lees de inhoud van het bestand
+        # Read file contents
         contents = await file.read()
 
         data = json.loads(contents)
