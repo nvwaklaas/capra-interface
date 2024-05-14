@@ -12,6 +12,7 @@ Shown below is a screenshot of the application taken May 13th 2024:
 
 Shown below is a class diagram describing the structure of this project as of May 13th 2024:
 ![Class diagram of the structure of this project](docs/images/class_diagram.png)
+This image will be updated as the project progresses.
 
 ## Requirements
 
