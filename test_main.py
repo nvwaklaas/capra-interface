@@ -66,3 +66,80 @@ def test_upload_json(client):
     assert response.status_code == 200
     assert response.json() == {
         "message": "JSON file uploaded and processed successfully"}
+
+
+@pytest.mark.parametrize("angle", [
+    (-0.9),
+    (1.6)
+])
+def test_angle_validation(client, angle):
+    """Boundary value testing for Angle, should be between -0.8 and 1.5"""
+    invalid_data = {"angle": angle, "speed": 1, "distance": 10}
+    response = client.post("/drive/", json=invalid_data)
+    assert response.status_code == 422
+    assert response.json() == {
+        "detail": [
+            {
+                'ctx': {
+                    'error': {},
+                },
+                'input': angle,
+                "loc": ["body", "angle"],
+                "msg": "Value error, Angle must be between -0.8 and 1.5 radians",
+                "type": "value_error",
+                'url': 'https://errors.pydantic.dev/2.7/v/value_error',
+            }
+        ]
+    }
+
+
+@pytest.mark.parametrize("speed", [
+    (3),
+    (-3)
+])
+def test_speed_validation(client, speed):
+    """Boundary value testing for Speed, should be between -2, and 2"""
+    invalid_data = {"angle": 1, "speed": speed, "distance": 10}
+    response = client.post("/drive/", json=invalid_data)
+    assert response.status_code == 422
+    assert response.json() == {
+        "detail": [
+            {
+                'ctx': {
+                    'error': {},
+                },
+                'input': speed,
+                "loc": ["body", "speed"],
+                "msg": "Value error, Speed must be between -2 and 2 m/s",
+                "type": "value_error",
+                'url': 'https://errors.pydantic.dev/2.7/v/value_error',
+            }
+        ]
+    }
+
+
+@pytest.mark.parametrize("distance", [
+    (101),
+    (0),
+    (0.05),
+    (-1)
+])
+def test_distance_validation(client, distance):
+    """Boundary value testing for Distance, should be between 0.1 and 100"""
+    invalid_data = {"angle": 0.5, "speed": 1, "distance": distance}
+    response = client.post("/drive/", json=invalid_data)
+    assert response.status_code == 422
+    assert response.json() == {
+        "detail": [
+            {
+                'ctx': {
+                    'error': {},
+                },
+                'input': distance,
+                "loc": ["body", "distance"],
+                "msg": "Value error, Distance must be between 0.1 and 100 meter",
+                "type": "value_error",
+                'url': 'https://errors.pydantic.dev/2.7/v/value_error',
+            }
+        ]
+    }
