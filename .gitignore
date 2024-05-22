@@ -1,4 +1,4 @@
 *.pyc
 .env
-.db
+*.db
 .DS_Store
