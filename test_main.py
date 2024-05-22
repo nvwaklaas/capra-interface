@@ -87,7 +87,6 @@ def test_angle_validation(client, angle):
                 "loc": ["body", "angle"],
                 "msg": "Value error, Angle must be between -0.8 and 1.5 radians",
                 "type": "value_error",
-                'url': 'https://errors.pydantic.dev/2.7/v/value_error',
             }
         ]
     }
@@ -112,7 +111,6 @@ def test_speed_validation(client, speed):
                 "loc": ["body", "speed"],
                 "msg": "Value error, Speed must be between -2 and 2 m/s",
                 "type": "value_error",
-                'url': 'https://errors.pydantic.dev/2.7/v/value_error',
             }
         ]
     }
@@ -139,7 +137,6 @@ def test_distance_validation(client, distance):
                 "loc": ["body", "distance"],
                 "msg": "Value error, Distance must be between 0.1 and 100 meter",
                 "type": "value_error",
-                'url': 'https://errors.pydantic.dev/2.7/v/value_error',
             }
         ]
     }
