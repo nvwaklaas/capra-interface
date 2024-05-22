@@ -106,8 +106,6 @@ Opens a route file and calculates distance between each node.
 Input file should be a json file in the format that is used by
 a Capra Hircus robot.
 
-Uses [Route](route.md) class.
-
 <a id="capra_control.ControlCapra.send_instruction"></a>
 
 ## send_instruction

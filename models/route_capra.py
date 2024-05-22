@@ -1,12 +1,12 @@
-"""Route data type"""
-from dataclasses import dataclass
+"""Route Class in Capra Hircus format"""
+
 from edge import Edge
 from node import Node
+from interfaces.route_abc import RouteAbstractClass
 
 
-@dataclass
-class Route:
-    """Class for defining a route"""
+class CapraRoute(RouteAbstractClass):
+    """Class for defining a route in Capra Hircus format"""
 
     def __init__(self, path_uuid, path_encoding=0) -> None:
         self.path_uuid = path_uuid

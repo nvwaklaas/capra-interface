@@ -10,7 +10,7 @@ class Edge:
     start_node_uuid: str
     end_node_uuid: str
 
-    def get_formatted_edge(self):
+    def get_formatted_edge(self) -> dict:
         """Returns an edge in the correct format for Capra Hircus"""
 
         return {

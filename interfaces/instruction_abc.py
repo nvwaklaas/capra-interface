@@ -2,11 +2,11 @@
 from abc import ABC, abstractmethod
 
 
-class InstructionABC(ABC):
+class InstructionAbstractClass(ABC):
     """Abstract class for Instruction"""
 
     @abstractmethod
-    def __init__(self, speed: int, angle: float):
+    def __init__(self, speed: int, angle: float) -> None:
         self.speed = speed
         self.angle = angle
 
