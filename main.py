@@ -4,11 +4,13 @@ import logging
 from fastapi import FastAPI, HTTPException, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from pydantic import BaseModel
-from sqlalchemy import create_engine, Column, Integer, Float
+from sqlalchemy import create_engine, Column, Integer, Float, Table, MetaData
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, mapper
 from capra_control import ControlCapra
+from models.instruction_create import InstructionCreate
+from models.instruction_response import InstructionResponse
+from tables.instructions_table import Instruction
 
 
 # pylint: disable=line-too-long
@@ -24,22 +26,30 @@ BROKER_PORT = 1883
 controller = ControlCapra(BROKER_ADRRESS, BROKER_PORT)
 
 
-class Instruction(Base):
-    """Creates Instruction table in the database"""
-    __tablename__ = "instructions"
-    id = Column(Integer, primary_key=True, index=True)
-    angle = Column(Float, nullable=False)
-    speed = Column(Integer, nullable=False)
-    distance = Column(Float, nullable=False)
-
-
 # Configure MySQL database
 SQLALCHEMY_DATABASE_URL = "sqlite:///./capra_db.db"
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+metadata = MetaData()
 
 # Create tables
-Base.metadata.create_all(bind=engine)
+instructions_table = Table(
+    'instructions',
+    metadata,
+    Column('id', Integer, primary_key=True, index=True),
+    Column('angle', Float, nullable=False),
+    Column('speed', Integer, nullable=False),
+    Column('distance', Float, nullable=False)
+
+)
+
+# Map tables
+mapper(Instruction, instructions_table)
+
+metadata.create_all(engine)
+
+# Create DB session
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 # FastAPI app
 app = FastAPI()
@@ -55,19 +65,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-# Pydantic models
-
-
-class InstructionCreate(BaseModel):
-    """Instruction model"""
-    angle: float = 0
-    speed: int
-    distance: float
-
-
-class InstructionResponse(InstructionCreate):
-    """Instruction Response code"""
-    id: int
 
 
 # API endpoints
