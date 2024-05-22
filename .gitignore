@@ -1,4 +1,4 @@
 *.pyc
 .env
-*.db
+capra_db.db
 .DS_Store
