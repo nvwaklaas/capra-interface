@@ -1,13 +1,12 @@
 """Module used for defining a DrivingInstruction"""
-from dataclasses import dataclass
 
 
-@dataclass
 class DrivingInstruction:
     """Class for defining a DrivingInstruction"""
 
-    speed: int
-    angle: float = 0.0
+    def __init__(self, speed: int, angle: float):
+        self.angle = angle
+        self.speed = speed
 
     def get_formatted_instruction(self):
         """Returns a driving instruction in the correct format for Capra Hircus"""
