@@ -1,7 +1,8 @@
 """Module used for defining a DrivingInstruction"""
+from interfaces.instruction_abc import InstructionABC
 
 
-class DrivingInstruction:
+class DrivingInstruction(InstructionABC):
     """Class for defining a DrivingInstruction"""
 
     def __init__(self, speed: int, angle: float):
