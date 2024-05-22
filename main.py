@@ -4,11 +4,12 @@ import logging
 from fastapi import FastAPI, HTTPException, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from pydantic import BaseModel
 from sqlalchemy import create_engine, Column, Integer, Float
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from capra_control import ControlCapra
+from models.instruction_create import InstructionCreate
+from models.instruction_response import InstructionResponse
 
 
 # pylint: disable=line-too-long
@@ -22,6 +23,8 @@ Base = declarative_base()
 BROKER_ADRRESS = "10.46.28.1"
 BROKER_PORT = 1883
 controller = ControlCapra(BROKER_ADRRESS, BROKER_PORT)
+
+# Define instruction table
 
 
 class Instruction(Base):
@@ -55,19 +58,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-# Pydantic models
-
-
-class InstructionCreate(BaseModel):
-    """Instruction model"""
-    angle: float = 0
-    speed: int
-    distance: float
-
-
-class InstructionResponse(InstructionCreate):
-    """Instruction Response code"""
-    id: int
 
 
 # API endpoints
