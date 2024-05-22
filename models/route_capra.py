@@ -2,10 +2,10 @@
 
 from edge import Edge
 from node import Node
-from interfaces.route_abc import RouteABC
+from interfaces.route_abc import RouteAbstractClass
 
 
-class CapraRoute(RouteABC):
+class CapraRoute(RouteAbstractClass):
     """Class for defining a route in Capra Hircus format"""
 
     def __init__(self, path_uuid, path_encoding=0) -> None:
