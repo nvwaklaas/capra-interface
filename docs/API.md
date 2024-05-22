@@ -1,14 +1,12 @@
 # Table of Contents
 
-* [main](#main)
-  * [Instruction](#main.Instruction)
-  * [InstructionCreate](#main.InstructionCreate)
-  * [InstructionResponse](#main.InstructionResponse)
-  * [create\_instruction](#main.create_instruction)
-  * [stop\_robot](#main.stop_robot)
-  * [connect\_to\_robot](#main.connect_to_robot)
-  * [get\_instruction](#main.get_instruction)
-  * [upload\_json](#main.upload_json)
+- [main](#main)
+  - [Instruction](#main.Instruction)
+  - [create_instruction](#main.create_instruction)
+  - [stop_robot](#main.stop_robot)
+  - [connect_to_robot](#main.connect_to_robot)
+  - [get_instruction](#main.get_instruction)
+  - [upload_json](#main.upload_json)
 
 <a id="main"></a>
 
@@ -18,7 +16,7 @@ API Module for controlling a Capra Hircus
 
 <a id="main.Instruction"></a>
 
-## Instruction Objects
+## Instruction Table
 
 ```python
 class Instruction(Base)
@@ -26,40 +24,23 @@ class Instruction(Base)
 
 Creates Instruction table in the database
 
-<a id="main.InstructionCreate"></a>
-
-## InstructionCreate Objects
-
-```python
-class InstructionCreate(BaseModel)
-```
-
-Instruction model
-
-<a id="main.InstructionResponse"></a>
-
-## InstructionResponse Objects
-
-```python
-class InstructionResponse(InstructionCreate)
-```
-
-Instruction Response code
-
 <a id="main.create_instruction"></a>
 
-#### create\_instruction
+## API Endpoints
+
+#### create_instruction
 
 ```python
 @app.post("/drive/", response_model=InstructionResponse)
 async def create_instruction(instruction: InstructionCreate)
 ```
 
-Creates a driving instruction and sends it to the robot
+Creates a driving instruction and sends it to the robot  
+Uses [InstructionCreate](create_instruction.md) model
 
 <a id="main.stop_robot"></a>
 
-#### stop\_robot
+#### stop_robot
 
 ```python
 @app.post("/stop/")
@@ -70,7 +51,7 @@ Send instruction to the robot to stop driving
 
 <a id="main.connect_to_robot"></a>
 
-#### connect\_to\_robot
+#### connect_to_robot
 
 ```python
 @app.get("/connect_to_robot")
@@ -81,7 +62,7 @@ Establishes a connection to the Capra Hircus
 
 <a id="main.get_instruction"></a>
 
-#### get\_instruction
+#### get_instruction
 
 ```python
 @app.get("/instructions/{instruction_id}", response_model=InstructionResponse)
@@ -92,7 +73,7 @@ Retrieves an instruction from the Database
 
 <a id="main.upload_json"></a>
 
-#### upload\_json
+#### upload_json
 
 ```python
 @app.post("/upload-json")
@@ -100,4 +81,3 @@ async def upload_json(file: UploadFile = File(...))
 ```
 
 Endpoint to upload a JSON file
-
