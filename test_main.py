@@ -94,10 +94,11 @@ def test_angle_validation(client, angle):
 
 @pytest.mark.parametrize("speed", [
     (3),
-    (-3)
+    (-3),
+    (0)
 ])
 def test_speed_validation(client, speed):
-    """Boundary value testing for Speed, should be between -2, and 2"""
+    """Boundary value testing for Speed, should be between -2, and 2 and cannot be 0"""
     invalid_data = {"angle": 1, "speed": speed, "distance": 10}
     response = client.post("/drive/", json=invalid_data)
     assert response.status_code == 422
@@ -109,7 +110,7 @@ def test_speed_validation(client, speed):
                 },
                 'input': speed,
                 "loc": ["body", "speed"],
-                "msg": "Value error, Speed must be between -2 and 2 m/s",
+                "msg": "Value error, Speed must be between -2 and 2 m/s and cannot be 0 m/s",
                 "type": "value_error",
             }
         ]

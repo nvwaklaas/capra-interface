@@ -20,8 +20,9 @@ class InstructionCreate(BaseModel):
     @classmethod
     def check_speed(cls, v):
         """Validate speed field"""
-        if v < -2 or v > 2:
-            raise ValueError("Speed must be between -2 and 2 m/s")
+        if v < -2 or v > 2 or v == 0:
+            raise ValueError(
+                "Speed must be between -2 and 2 m/s and cannot be 0 m/s")
         return v
 
     @field_validator('distance')

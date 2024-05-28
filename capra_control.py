@@ -6,6 +6,7 @@ import math
 import paho.mqtt.client as mqtt
 from geopy.distance import geodesic
 from models.driving_instruction import DrivingInstruction
+from models.coordinate import Coordinate
 
 # pylint: disable=line-too-long
 TOPIC_SEND_PATH = 'capra/navigation/send_path'
@@ -93,7 +94,7 @@ class ControlCapra():
             self.logger.info(
                 "An unexpected error occured during connection: %s.", e)
 
-    def calculate_distance_angle(self, coord_1, coord_2) -> dict:
+    def calculate_distance_angle(self, coord_1: Coordinate, coord_2: Coordinate) -> dict:
         """Calculates the distance and angle between two coordinates using the Haversine formula"""
 
         # Convert degrees to radians
@@ -146,7 +147,7 @@ class ControlCapra():
 
         return distances
 
-    def send_instruction(self, speed, angle: float = 0.0) -> None:
+    def send_instruction(self, speed: int, angle: float = 0.0) -> None:
         """Used for remotely controlling Capra Hircus using odometry."""
 
         instruction = DrivingInstruction(speed, angle)
