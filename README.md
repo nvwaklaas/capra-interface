@@ -4,7 +4,7 @@ This application can be used to control a Capra Hircus robot using Python.
 The application consists of three layers:
 
 - A Vue/Vite front-end
-- A Python FastAPI back-end (For more information see: [Back-end API Documentation](docs/API.md))
+- A Python FastAPI back-end (For more information see: [Back-end API Documentation](docs/API.md) or navigate to [http://localhost:8000/docs](http://localhost:8000/docs) after installing and starting the API.)
 - A Class containing methods for interfacing with a Capra Hircus robot (For more information see: [CapraControl Documentation](docs/controller.md)).
 - Various Models for describing different types of data (For more information see: [Models Documentation](docs/models.md))
 

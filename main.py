@@ -24,6 +24,11 @@ BROKER_ADRRESS = "10.46.28.1"
 BROKER_PORT = 1883
 controller = ControlCapra(BROKER_ADRRESS, BROKER_PORT)
 
+API_META_DESCRIPTION = """
+This API is used for interfacing with a Capra Hircus robot using Python and MQTT.
+You can use this API to send driving instructions to control the robot.
+"""
+
 # Define instruction table
 
 
@@ -45,7 +50,12 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base.metadata.create_all(bind=engine)
 
 # FastAPI app
-app = FastAPI()
+app = FastAPI(
+    title="Capra API",
+    description=API_META_DESCRIPTION,
+    summary="API for interfacing with a Capra Hircus robot.",
+    version="0.1.0"
+)
 
 origins = [
     "http://localhost:5173"
