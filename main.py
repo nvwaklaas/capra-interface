@@ -1,6 +1,7 @@
 """API Module for controlling a Capra Hircus"""
 import json
 import logging
+from typing import List
 from fastapi import FastAPI, HTTPException, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -10,6 +11,7 @@ from sqlalchemy.orm import sessionmaker
 from capra_control import ControlCapra
 from models.instruction_create import InstructionCreate
 from models.instruction_response import InstructionResponse
+
 
 # pylint: disable=line-too-long
 
@@ -150,6 +152,15 @@ async def upload_json(file: UploadFile = File(...)):
     except FileNotFoundError as e:
         logger.error("Error processing JSON file: %s", e)
         return JSONResponse(status_code=500, content={"message": f"Error processing JSON file: {str(e)}"})
+
+
+@app.get("/instructions", response_model=List[InstructionResponse])
+def get_all_instructions():
+    """Retrieves all instructions from the Database"""
+    db = SessionLocal()
+    instructions = db.query(Instruction).all()
+    return instructions
+
 
 if __name__ == "__main__":
     import uvicorn
