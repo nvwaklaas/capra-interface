@@ -28,104 +28,80 @@ class ControlCapra():
         self.client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
 
         self.logger = logging.getLogger(__name__)
-        logging.basicConfig()
+        logging.basicConfig(level=logging.INFO)
         self.logger.setLevel(logging.INFO)
 
     def connect_to_robot(self) -> None:
         """Establishes connection to Capra Hircus"""
         try:
+            self.logger.info("Connecting to robot at %s:%d",
+                             self.broker_address, self.broker_port)
             self.client.connect(self.broker_address, self.broker_port)
+            self.logger.info("Successfully connected to robot")
         except ConnectionRefusedError:
-            print('Connection refused')
+            self.logger.error("Connection refused")
         except ConnectionAbortedError:
-            print('Connection aborted')
+            self.logger.error("Connection aborted")
         except ConnectionResetError:
-            print('Connection reset')
-        except ConnectionError as e:
-            print(f"An unexpected error occured during connection: {e}")
-
-    def mq_set_mode(self, mode: int) -> None:
-        """Sets the mode of the Capra Hircus.  
-        Available modes are:\n
-        STOPPED=1\n
-        RUNNING=2\n
-        ABORTING=3\n
-        ABORTED=4\n
-        PAUSED=5
-
-        Modes are used to send different types of instructions to the robot.
-        """
-
-        mode = '{"operation_mode": %d}' % (mode)
-        try:
-            self.client.publish(TOPIC_SET_MODE, mode)
-            self.logger.info("\nMode set to: %s", mode)
+            self.logger.error("Connection reset")
         except ConnectionError as e:
             self.logger.error(
-                "An unexpected error occured during connection: %s.", e)
+                "An unexpected error occured during connection: %s", e)
+
+    def mq_set_mode(self, mode: int) -> None:
+        """Sets the mode of the Capra Hircus."""
+        mode_message = '{"operation_mode": %d}' % (mode)
+        try:
+            self.client.publish(TOPIC_SET_MODE, mode_message)
+            self.logger.info("Mode set to: %d", mode)
+        except ConnectionError as e:
+            self.logger.error(
+                "An unexpected error occured during setting mode: %s", e)
 
     @staticmethod
     def load_path_file(filename: str) -> dict:
-        """
-        load_path_file() loads a Capra Hircus path file in json format.
-        A Capra Hircus path file can be created using the Capra Commander Mobile application.
-        This mobile application can be found on the official Capra Hircus documentation
-        """
-
+        """Loads a Capra Hircus path file in json format."""
         try:
             with open(filename, encoding="utf-8") as f:
                 data = json.load(f)
+                logging.info("Path file %s loaded successfully", filename)
         except FileNotFoundError:
-            print("The file {filename} was not found.")
-
+            logging.error("The file %s was not found.", filename)
+            data = {}
         return data
 
     def send_path(self, filename: str) -> None:
-        """Sends a path to drive structured in the format as specified on the Capra Hircus documentation"""
-
-        # Create message to publish to the topic.
+        """Sends a path to drive structured in the format as specified on the Capra Hircus documentation."""
         msg = self.load_path_file(filename)
-
         msg_json = json.dumps(msg)
         try:
             self.client.publish(TOPIC_SEND_PATH, msg_json)
-            self.logger.info('Path sent')
+            self.logger.info("Path sent from file: %s", filename)
         except ConnectionError as e:
-            self.logger.info(
-                "An unexpected error occured during connection: %s.", e)
+            self.logger.error(
+                "An unexpected error occured during sending path: %s", e)
 
     def calculate_distance_angle(self, coord_1: Coordinate, coord_2: Coordinate) -> dict:
-        """Calculates the distance and angle between two coordinates using the Haversine formula"""
-
-        # Convert degrees to radians
+        """Calculates the distance and angle between two coordinates using the Haversine formula."""
         lat1 = math.radians(coord_1[0])
         lon1 = math.radians(coord_1[1])
         lat2 = math.radians(coord_2[0])
         lon2 = math.radians(coord_2[1])
 
-        # Difference in longitudes and latitudes
         dlon = lon2 - lon1
-        print(f"dlon: {dlon}")
         dlat = lat2 - lat1
-        print(f"dlate: {dlat}")
 
-        # Haversine formula
         a = math.sin(dlat/2)**2 + math.cos(lat1) * \
             math.cos(lat2) * math.sin(dlon/2)**2
-
-        # Calculating angle between coorindates
         c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
-
-        # Calculate the distance
         distance = R * c
 
+        self.logger.info(
+            "Calculated distance: %f and angle: %f between coordinates", distance, c)
         return {"distance": distance, "angle": c}
 
     def calculate_distances_from_path(self, filename: str) -> list:
-        """Opens a route file and calculates distance between each node.\n
-        Input file should be a json file in the format that is used by
-        a Capra Hircus robot"""
-
+        """Opens a route file and calculates distance between each node."""
         data = self.load_path_file(filename)
         distances = []
         position = "position"
@@ -139,49 +115,37 @@ class ControlCapra():
                 x_2 = data[nodes][i+1][position]["x"]
                 y_2 = data[nodes][i+1][position]["y"]
                 coord_2 = (x_2, y_2)
-
-                # using geopy to calculate distance between coordinates in metres.
                 distances.append(geodesic(coord_1, coord_2).km * 1000)
+            self.logger.info("Calculated distances from path: %s", filename)
         except IndexError:
-            self.logger.error('Invalid data format in json file.')
+            self.logger.error('Invalid data format in json file: %s', filename)
 
         return distances
 
     def send_instruction(self, speed: int, angle: float = 0.0) -> None:
         """Used for remotely controlling Capra Hircus using odometry."""
-
         instruction = DrivingInstruction(speed, angle)
-
-        # Get instruction string as specified by Capra documentation
         msg_json = json.dumps(instruction.get_formatted_instruction())
-
         try:
             self.client.publish(TOPIC_REMOTE, msg_json)
+            self.logger.info("Sent instruction: %s", msg_json)
         except ConnectionError as e:
             self.logger.error(
-                "An unexpected error occured during connection: %s.", e)
+                "An unexpected error occured during sending instruction: %s", e)
 
     def remote_control(self, distance: float = 0.1, speed: int = 0, angle: float = 0.0) -> None:
-        """
-        Instructs a Capra Hircus robot to drive for a given distance, with a given angle and speed.
-        Instructions should be send at a frenquency of 10 Hertz as specified by Capra documentation.
-        """
-
+        """Instructs a Capra Hircus robot to drive for a given distance, with a given angle and speed."""
         frequency = 0.1  # 10 Hz
         distance_covered = 0.0
 
         if speed == 0:
-            # set distance when speed = 0 to prevent endless loop.
             distance_per_instruction = 0.1
             distance = 0.1
         else:
-            # Use absolute value as speed can be negative
             distance_per_instruction = abs(speed) * frequency
 
-        # Sends instructions to drive until distance is fully covered.
         while distance_covered < distance:
             self.send_instruction(speed, angle)
-            # Pausing in order to send instructions at 10 Hz.
             time.sleep(frequency)
             self.logger.info("Distance covered: %f/%f",
                              distance_covered, distance)

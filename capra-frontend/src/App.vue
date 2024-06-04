@@ -1,15 +1,13 @@
 <template>
+  <div id="flash" v-if="flashMessage" role="alert">
+    <FlashMessage :type="type" :message="message" />
+  </div>
 
-    <div id="flash" v-if="flashMessage" role="alert">
-      <FlashMessage :type=type :message=message />
-    </div>
-
-  <div id="app" class="mx-auto max-w-md p-6 shadow-md rounded-lg">
-    <h1 class="text-2xl font-bold mb-4">Robot Control Panel</h1>
-    <!-- Flashbericht weergeven -->
+  <div id="app" class="mx-auto max-w-md p-6 shadow-md rounded-lg bg-nvwa-grijs-1">
+    <h1 class="text-2xl font-bold mb-4 text-logo-blue">Robot Control Panel</h1>
 
     <div class="mb-4">
-      <button class="bg-nvwa-grijs-2" @click="connectToRobot">Connect to Robot</button>
+      <button class="bg-donker-blue text-white py-2 px-4 rounded-md hover:bg-hemel-blue transition-colors duration-300" @click="connectToRobot">Connect to Robot</button>
     </div>
     <div class="mb-4">
       <label for="speed" class="block mb-1">Speed (m/s):</label>
@@ -30,80 +28,127 @@
         <span>{{ -angle }}</span>
       </div>
     </div>
-    <button @click="sendInstruction" class="w-full py-2 px-4 bg-donker-blue text-white rounded-md hover:bg-hemel-blue">Send Instruction</button><br />
+    <div class="mb-4">
+      <label for="instructions" class="block mb-1">Select Instruction:</label>
+      <select v-model="selectedInstruction" id="instructions" class="w-full p-2 border border-gray-300 rounded-md">
+        <option value="" disabled selected>Select an instruction</option>
+        <option v-for="instruction in instructions" :key="instruction.id" :value="instruction" class="text-logo-blue">
+          ID: {{ instruction.id }}, Angle: {{ instruction.angle }}, Speed: {{ instruction.speed }}, Distance: {{ instruction.distance }}
+        </option>
+      </select>
+    </div>
+    <button @click="sendSelectedInstruction" class="w-full py-2 px-4 bg-donker-blue text-white rounded-md hover:bg-hemel-blue">Send Selected Instruction</button>
+    <button @click="sendInstruction" class="w-full py-2 mt-2 px-4 bg-donker-blue text-white rounded-md hover:bg-hemel-blue">Send Custom Instruction</button>
     <button @click="stopRobot" class="w-full py-2 mt-2 px-4 bg-nvwa-rood text-white rounded-md hover:bg-hemel-blue">Stop Robot</button>
   </div>
 </template>
 
 <script>
 import axios from "axios";
-import UploadPath from "./components/UploadPath.vue"; 
 import FlashMessage from "./components/FlashMessage.vue";
-
 
 export default {
   name: "App",
   components: {
-    UploadPath
+    FlashMessage
   },
   data() {
     return {
       speed: 1,
       distance: 0,
       angle: 0,
+      selectedInstruction: null,
+      instructions: [],
       type: "",
       message: "",
-      flashMessage: "",
+      flashMessage: ""
     };
   },
+  created() {
+    this.fetchInstructions();
+  },
   methods: {
+    async fetchInstructions() {
+      try {
+        const response = await axios.get("http://localhost:8000/instructions");
+        this.instructions = response.data;
+      } catch (error) {
+        this.flashMessage = "Error fetching instructions: " + (error.response ? error.response.data.detail : error.message);
+        this.type = "error";
+        this.message = this.flashMessage;
+        setTimeout(() => {
+          this.flashMessage = "";
+        }, 5000);
+      }
+    },
     async sendInstruction() {
       try {
         await axios.post("http://localhost:8000/drive/", {
           speed: this.speed,
           distance: this.distance,
-          angle: -this.angle     
+          angle: -this.angle
         });
-        console.log("Instruction sent successfully");
         this.flashMessage = "Instruction sent successfully";
         this.type = "success";
-        this.message = this.flashMessage
-
+        this.message = this.flashMessage;
         setTimeout(() => {
-            this.flashMessage = "";
-          }, 5000);
+          this.flashMessage = "";
+        }, 5000);
       } catch (error) {
-        this.flashMessage = "Error sending instruction: " + error.message;
-        this.type = "error"
-        this.message = this.flashMessage
-        console.error("Error sending instruction:", error);
-        
+        this.flashMessage = "Error sending instruction: " + (error.response ? error.response.data.detail : error.message);
+        this.type = "error";
+        this.message = this.flashMessage;
+        setTimeout(() => {
+          this.flashMessage = "";
+        }, 5000);
+      }
+    },
+    async sendSelectedInstruction() {
+      if (!this.selectedInstruction) {
+        this.flashMessage = "Please select an instruction to send";
+        this.type = "error";
+        this.message = this.flashMessage;
+        setTimeout(() => {
+          this.flashMessage = "";
+        }, 5000);
+        return;
+      }
+
+      try {
+        await axios.post("http://localhost:8000/drive/", {
+          speed: this.selectedInstruction.speed,
+          distance: this.selectedInstruction.distance,
+          angle: this.selectedInstruction.angle
+        });
+        this.flashMessage = "Selected instruction sent successfully";
+        this.type = "success";
+        this.message = this.flashMessage;
+        setTimeout(() => {
+          this.flashMessage = "";
+        }, 5000);
+      } catch (error) {
+        this.flashMessage = "Error sending selected instruction: " + (error.response ? error.response.data.detail : error.message);
+        this.type = "error";
+        this.message = this.flashMessage;
         setTimeout(() => {
           this.flashMessage = "";
         }, 5000);
       }
     },
     connectToRobot() {
-      // Doe een HTTP GET-verzoek naar de connect_to_robot endpoint
       axios.get("http://localhost:8000/connect_to_robot/")
         .then(response => {
-          console.log("Connected to the robot:", response.data);
-          // Zet de flashMessage
           this.flashMessage = "Connected to the robot";
-          this.type = "success"
-          this.message = "Established connection to Capra Hircus"
-          // Wis de flashMessage na 5 seconden
+          this.type = "success";
+          this.message = response.data.message;
           setTimeout(() => {
             this.flashMessage = "";
           }, 5000);
         })
         .catch(error => {
-          // Zet de flashMessage in errorMessage
-          this.flashMessage = "Error connecting to the robot: " + error;
-          this.type = "error"
-          this.message = this.flashMessage
-          console.error("Error connecting to the robot:", error);
-          // Wis de flashMessage na 5 seconden
+          this.flashMessage = "Error connecting to the robot: " + (error.response ? error.response.data.detail : error.message);
+          this.type = "error";
+          this.message = this.flashMessage;
           setTimeout(() => {
             this.flashMessage = "";
           }, 5000);
@@ -111,21 +156,25 @@ export default {
     },
     stopRobot() {
       axios.post('http://localhost:8000/stop/')
-      .then(response => {
-        console.log(response.data.message)
-          this.flashMessage = response;
-          this.type = "success"
-          this.message = response.data.message
-          // Wis de flashMessage na 5 seconden
+        .then(response => {
+          this.flashMessage = response.data.message;
+          this.type = "success";
+          this.message = response.data.message;
           setTimeout(() => {
             this.flashMessage = "";
           }, 5000);
-      })
+        })
+        .catch(error => {
+          this.flashMessage = "Error stopping the robot: " + (error.response ? error.response.data.detail : error.message);
+          this.type = "error";
+          this.message = this.flashMessage;
+          setTimeout(() => {
+            this.flashMessage = "";
+          }, 5000);
+        });
     }
   }
 };
 </script>
 
-<style>
-/* Voeg eventuele stijlen toe */
-</style>
+
