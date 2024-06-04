@@ -73,9 +73,11 @@ Start API server
 uvicorn main:app
 ```
 
-## Installation - Docker Image
+## Installation - Docker Images
 
-The FastAPI back-end can also be used as a docker image. To build a docker image for the API, use the following command:
+### API
+
+The application can also be used as a docker image. To build a docker image for the API, use the following command:
 
 ```bash
 docker build -t capra-api .
@@ -88,6 +90,21 @@ docker run -d  -p 8000:8000 capra-api
 ```
 
 To enable the output of the container, simply remove the `-d` flag from the command.
+
+### Front-end
+
+To build the image for the front-end, use the following commands:
+
+```bash
+cd capra-frontend
+docker build -t capra-frontend .
+```
+
+Use the following command to start the container:
+
+```bash
+docker run -p 5173:5173 -d capra-frontend
+```
 
 ## Installation - Front-end
 
