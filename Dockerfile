@@ -15,4 +15,6 @@ COPY ./capra_control.py /code/capra_control.py
 #
 COPY ./main.py /code/main.py
 #
+EXPOSE 8000
+#
 CMD ["fastapi", "run", "main.py", "--port", "8000"]
