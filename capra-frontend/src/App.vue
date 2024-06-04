@@ -1,12 +1,10 @@
 <template>
-
-    <div id="flash" v-if="flashMessage" role="alert">
-      <FlashMessage :type=type :message=message />
-    </div>
+  <div id="flash" v-if="flashMessage" role="alert">
+    <FlashMessage :type="type" :message="message" />
+  </div>
 
   <div id="app" class="mx-auto max-w-md p-6 shadow-md rounded-lg">
     <h1 class="text-2xl font-bold mb-4">Robot Control Panel</h1>
-    <!-- Flashbericht weergeven -->
 
     <div class="mb-4">
       <button class="bg-nvwa-grijs-2" @click="connectToRobot">Connect to Robot</button>
@@ -37,14 +35,12 @@
 
 <script>
 import axios from "axios";
-import UploadPath from "./components/UploadPath.vue"; 
 import FlashMessage from "./components/FlashMessage.vue";
-
 
 export default {
   name: "App",
   components: {
-    UploadPath
+    FlashMessage
   },
   data() {
     return {
@@ -53,57 +49,52 @@ export default {
       angle: 0,
       type: "",
       message: "",
-      flashMessage: "",
+      flashMessage: ""
     };
   },
   methods: {
     async sendInstruction() {
-      try {
-        await axios.post("http://localhost:8000/drive/", {
+      axios.post("http://localhost:8000/drive/", {
           speed: this.speed,
           distance: this.distance,
-          angle: -this.angle     
-        });
-        console.log("Instruction sent successfully");
+          angle: -this.angle
+        })
+      .then(response => {
         this.flashMessage = "Instruction sent successfully";
         this.type = "success";
-        this.message = this.flashMessage
-
-        setTimeout(() => {
-            this.flashMessage = "";
-          }, 5000);
-      } catch (error) {
-        this.flashMessage = "Error sending instruction: " + error.message;
-        this.type = "error"
-        this.message = this.flashMessage
-        console.error("Error sending instruction:", error);
-        
+        this.message = this.flashMessage;
         setTimeout(() => {
           this.flashMessage = "";
         }, 5000);
-      }
+      })
+      .catch(error => {
+        if (error.response && error.response.data && error.response.data.detail) {
+          const details = error.response.data.detail;
+          this.flashMessage = details.map(detail => detail.msg).join(", ");
+        } else {
+          this.flashMessage = "Error sending instruction: " + error.message;
+        }
+        this.type = "error";
+        this.message = this.flashMessage;
+        setTimeout(() => {
+          this.flashMessage = "";
+        }, 5000);
+      })
     },
     connectToRobot() {
-      // Doe een HTTP GET-verzoek naar de connect_to_robot endpoint
       axios.get("http://localhost:8000/connect_to_robot/")
         .then(response => {
-          console.log("Connected to the robot:", response.data);
-          // Zet de flashMessage
           this.flashMessage = "Connected to the robot";
-          this.type = "success"
-          this.message = "Established connection to Capra Hircus"
-          // Wis de flashMessage na 5 seconden
+          this.type = "success";
+          this.message = response.data.message;
           setTimeout(() => {
             this.flashMessage = "";
           }, 5000);
         })
         .catch(error => {
-          // Zet de flashMessage in errorMessage
-          this.flashMessage = "Error connecting to the robot: " + error;
-          this.type = "error"
-          this.message = this.flashMessage
-          console.error("Error connecting to the robot:", error);
-          // Wis de flashMessage na 5 seconden
+          this.flashMessage = "Error connecting to the robot: " + (error.response ? error.response.data.detail : error.message);
+          this.type = "error";
+          this.message = this.flashMessage;
           setTimeout(() => {
             this.flashMessage = "";
           }, 5000);
@@ -111,21 +102,23 @@ export default {
     },
     stopRobot() {
       axios.post('http://localhost:8000/stop/')
-      .then(response => {
-        console.log(response.data.message)
-          this.flashMessage = response;
-          this.type = "success"
-          this.message = response.data.message
-          // Wis de flashMessage na 5 seconden
+        .then(response => {
+          this.flashMessage = response.data.message;
+          this.type = "success";
+          this.message = response.data.message;
           setTimeout(() => {
             this.flashMessage = "";
           }, 5000);
-      })
+        })
+        .catch(error => {
+          this.flashMessage = "Error stopping the robot: " + (error.response ? error.response.data.detail : error.message);
+          this.type = "error";
+          this.message = this.flashMessage;
+          setTimeout(() => {
+            this.flashMessage = "";
+          }, 5000);
+        });
     }
   }
 };
 </script>
-
-<style>
-/* Voeg eventuele stijlen toe */
-</style>
