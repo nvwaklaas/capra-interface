@@ -1,0 +1,22 @@
+services:
+  fastapi:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: fastapi-container
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/code
+    command: ["python", "main.py"]
+
+  frontend:
+    build:
+      context: ./capra-frontend
+      dockerfile: Dockerfile
+    container_name: frontend-container
+    ports:
+      - '5173:5173'
+    environment:
+      - NODE_ENV=development
+      - HOST=0.0.0.0

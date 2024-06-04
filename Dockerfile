@@ -15,4 +15,6 @@ COPY ./capra_control.py /code/capra_control.py
 #
 COPY ./main.py /code/main.py
 #
-CMD ["fastapi", "run", "main.py", "--port", "8000"]
+EXPOSE 8000
+#
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
