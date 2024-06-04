@@ -8,7 +8,7 @@ The application consists of three layers:
 - A Class containing methods for interfacing with a Capra Hircus robot (For more information see: [CapraControl Documentation](docs/controller.md)).
 - Various Models for describing different types of data (For more information see: [Models Documentation](docs/models.md))
 
-Shown below is a screenshot of the application taken May 13th 2024:
+Shown below is a screenshot of the application taken June 4 2024:
 ![Screenshot of capra-interface front-end](docs/images/capra_interface_scr.jpg)
 
 Shown below is a class diagram describing the structure of this project as of May 13th 2024:
