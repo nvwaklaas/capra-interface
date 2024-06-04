@@ -6,9 +6,13 @@
   <div id="app" class="mx-auto max-w-md p-6 shadow-md rounded-lg bg-nvwa-grijs-1">
     <h1 class="text-2xl font-bold mb-4 text-logo-blue">Robot Control Panel</h1>
 
-    <div class="mb-4">
+    <!-- <div class="mb-4">
       <button class="bg-donker-blue text-white py-2 px-4 rounded-md hover:bg-hemel-blue transition-colors duration-300" @click="connectToRobot">Connect to Robot</button>
-    </div>
+    </div> -->
+    <div class="mb-4">
+    <button class="bg-donker-blue text-white py-2 px-4 rounded-md hover:bg-hemel-blue transition-colors duration-300" @click="connectToRobot" :disabled="isLoading">Connect to Robot</button>
+    <div v-if="isLoading" class="text-sm text-gray-600 mt-2">Connecting to the robot...</div>
+  </div>
     <div class="mb-4">
       <label for="speed" class="block mb-1">Speed (m/s):</label>
       <input v-model.number="speed" type="number" id="speed" min="-2" max="2" step="1" class="w-full p-2 border border-gray-300 rounded-md" />
@@ -61,7 +65,8 @@ export default {
       instructions: [],
       type: "",
       message: "",
-      flashMessage: ""
+      flashMessage: "",
+      isLoading: false
     };
   },
   created() {
@@ -141,24 +146,23 @@ export default {
         }, 5000);
       }
     },
-    connectToRobot() {
-      axios.get("http://localhost:8000/connect_to_robot/")
-        .then(response => {
-          this.flashMessage = "Connected to the robot";
-          this.type = "success";
-          this.message = response.data.message;
-          setTimeout(() => {
-            this.flashMessage = "";
-          }, 5000);
-        })
-        .catch(error => {
-          this.flashMessage = "Error connecting to the robot: " + (error.response ? error.response.data.detail : error.message);
-          this.type = "error";
-          this.message = this.flashMessage;
-          setTimeout(() => {
-            this.flashMessage = "";
-          }, 5000);
-        });
+    async connectToRobot() {
+      this.isLoading = true; // Set loading state to true
+      try {
+        const response = await axios.get("http://localhost:8000/connect_to_robot/");
+        this.flashMessage = "Connected to the robot";
+        this.type = "success";
+        this.message = response.data.message;
+      } catch (error) {
+        this.flashMessage = "Error connecting to the robot: " + (error.response ? error.response.data.detail : error.message);
+        this.type = "error";
+        this.message = this.flashMessage;
+      } finally {
+        this.isLoading = false; // Reset loading state regardless of success or failure
+        setTimeout(() => {
+          this.flashMessage = "";
+        }, 5000);
+      }
     },
     stopRobot() {
       axios.post('http://localhost:8000/stop/')
