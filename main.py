@@ -24,6 +24,7 @@ BROKER_ADRRESS = "10.46.28.1"
 BROKER_PORT = 1883
 controller = ControlCapra(BROKER_ADRRESS, BROKER_PORT)
 
+
 API_META_DESCRIPTION = """
 This API is used for interfacing with a Capra Hircus robot using Python and MQTT.
 You can use this API to send driving instructions to control the robot.
@@ -86,9 +87,11 @@ async def create_instruction(instruction: InstructionCreate):
     db.refresh(db_instruction)
 
     # Instruct robot to drive
+
     controller.mq_set_mode(1)
     controller.remote_control(db_instruction.distance,
                               db_instruction.speed, db_instruction.angle)
+
     return db_instruction
 
 
