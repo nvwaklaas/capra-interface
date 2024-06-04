@@ -45,7 +45,7 @@ def test_connection_failed(client):
     response = client.get("/connect_to_robot")
     assert response.status_code == 500
     assert response.json() == {
-        'detail': "Failed to connect to Capra Hircus, are you connected to it's wifi?"}
+        'detail': "Failed to connect to Capra Hircus, are you connected to its wifi?"}
 
 
 def test_get_instruction(client):

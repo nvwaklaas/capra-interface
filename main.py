@@ -118,7 +118,7 @@ def connect_to_robot():
     except Exception as e:
         logger.error("Error connecting to the robot: %s", e)
         raise HTTPException(
-            status_code=500, detail="Failed to connect to Capra Hircus, are you connected to it's wifi?") from e
+            status_code=500, detail="Failed to connect to Capra Hircus, are you connected to its wifi?") from e
 
 
 @app.get("/instructions/{instruction_id}", response_model=InstructionResponse)
