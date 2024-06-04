@@ -30,7 +30,8 @@
         <span>{{ -angle }}</span>
       </div>
     </div>
-    <button @click="sendInstruction" class="w-full py-2 px-4 bg-donker-blue text-white rounded-md hover:bg-hemel-blue">Send Instruction</button>
+    <button @click="sendInstruction" class="w-full py-2 px-4 bg-donker-blue text-white rounded-md hover:bg-hemel-blue">Send Instruction</button><br />
+    <button @click="stopRobot" class="w-full py-2 mt-2 px-4 bg-nvwa-rood text-white rounded-md hover:bg-hemel-blue">Stop Robot</button>
   </div>
 </template>
 
@@ -64,6 +65,13 @@ export default {
           angle: -this.angle     
         });
         console.log("Instruction sent successfully");
+        this.flashMessage = "Instruction sent successfully";
+        this.type = "success";
+        this.message = this.flashMessage
+
+        setTimeout(() => {
+            this.flashMessage = "";
+          }, 5000);
       } catch (error) {
         this.flashMessage = "Error sending instruction: " + error.message;
         this.type = "error"
@@ -91,7 +99,7 @@ export default {
         })
         .catch(error => {
           // Zet de flashMessage in errorMessage
-          this.flashMessage = "Error connecting to the robot: " + error.message;
+          this.flashMessage = "Error connecting to the robot: " + error;
           this.type = "error"
           this.message = this.flashMessage
           console.error("Error connecting to the robot:", error);
@@ -100,6 +108,19 @@ export default {
             this.flashMessage = "";
           }, 5000);
         });
+    },
+    stopRobot() {
+      axios.post('http://localhost:8000/stop/')
+      .then(response => {
+        console.log(response.data.message)
+          this.flashMessage = response;
+          this.type = "success"
+          this.message = response.data.message
+          // Wis de flashMessage na 5 seconden
+          setTimeout(() => {
+            this.flashMessage = "";
+          }, 5000);
+      })
     }
   }
 };
