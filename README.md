@@ -12,7 +12,7 @@ Shown below is a screenshot of the application taken June 4 2024:
 ![Screenshot of capra-interface front-end](docs/images/capra_interface.jpg)
 
 Shown below is a class diagram describing the structure of this project as of May 13th 2024:
-![Class diagram of the structure of this project](docs/images/class_diagram.png)  
+![Class diagram of the structure of this project](docs/images/class_diagram_2.png)  
 This image will be updated as the project progresses.
 
 ## Requirements
