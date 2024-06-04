@@ -82,26 +82,32 @@ export default {
       }
     },
     async sendInstruction() {
-      try {
-        await axios.post("http://localhost:8000/drive/", {
+      axios.post("http://localhost:8000/drive/", {
           speed: this.speed,
           distance: this.distance,
           angle: -this.angle
-        });
+        })
+      .then(response => {
         this.flashMessage = "Instruction sent successfully";
         this.type = "success";
         this.message = this.flashMessage;
         setTimeout(() => {
           this.flashMessage = "";
         }, 5000);
-      } catch (error) {
-        this.flashMessage = "Error sending instruction: " + (error.response ? error.response.data.detail : error.message);
+      })
+      .catch(error => {
+        if (error.response && error.response.data && error.response.data.detail) {
+          const details = error.response.data.detail;
+          this.flashMessage = details.map(detail => detail.msg).join(", ");
+        } else {
+          this.flashMessage = "Error sending instruction: " + error.message;
+        }
         this.type = "error";
         this.message = this.flashMessage;
         setTimeout(() => {
           this.flashMessage = "";
         }, 5000);
-      }
+      })
     },
     async sendSelectedInstruction() {
       if (!this.selectedInstruction) {
