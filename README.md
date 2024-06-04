@@ -9,7 +9,7 @@ The application consists of three layers:
 - Various Models for describing different types of data (For more information see: [Models Documentation](docs/models.md))
 
 Shown below is a screenshot of the application taken June 4 2024:
-![Screenshot of capra-interface front-end](docs/images/capra_interface.jpg)
+![Screenshot of capra-interface front-end](docs/images/capra_interface_2.jpg)
 
 Shown below is a class diagram describing the structure of this project as of June 4 2024:
 ![Class diagram of the structure of this project](docs/images/class_diagram_2.png)  
