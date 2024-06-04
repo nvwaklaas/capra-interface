@@ -80,7 +80,7 @@ uvicorn main:app
 The application can also be used as a docker image. To build a docker image for the API, use the following command:
 
 ```bash
-docker build -t capra-api .
+docker build -f Dockerfile.fastapi -t capra-api .
 ```
 
 After the build is completed, the image can be used using the following command:
@@ -97,7 +97,7 @@ To build the image for the front-end, use the following commands:
 
 ```bash
 cd capra-frontend
-docker build -t capra-frontend .
+docker build -f Dockerfile.frontend -t capra-frontend .
 ```
 
 Use the following command to start the container:
