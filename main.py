@@ -74,9 +74,8 @@ app.add_middleware(
 # API endpoints
 
 
-@app.post("/drive/", response_model=InstructionResponse)
-async def create_instruction(instruction: InstructionCreate):
-    """Creates a driving instruction and sends it to the robot"""
+def store_instruction(instruction: InstructionCreate) -> InstructionCreate:
+    """Stores instruction on the database."""
     logger.info("Received instruction: %s", instruction)
     db = SessionLocal()
     db_instruction = Instruction(**instruction.model_dump())
@@ -84,19 +83,33 @@ async def create_instruction(instruction: InstructionCreate):
     db.commit()
     db.refresh(db_instruction)
 
+    return db_instruction
+
+
+def send_instruction(instruction: InstructionCreate) -> InstructionCreate:
+    """Instructs the robot to drive by sending an instruction"""
     # Instruct robot to drive
     controller.mq_set_mode(1)
 
     try:
-        controller.remote_control(db_instruction.distance,
-                                  db_instruction.speed, db_instruction.angle)
-        logger.info("Instruction sent to robot: %s", db_instruction)
+        controller.remote_control(instruction.distance,
+                                  instruction.speed, instruction.angle)
+        logger.info("Instruction sent to robot: %s", instruction)
     except ValueError as exc:
         logger.error("Error sending instruction to robot: %s", exc)
         raise HTTPException(
             status_code=422, detail="Invalid parameters for driving instruction") from exc
 
-    return db_instruction
+    return instruction
+
+
+@app.post("/drive/", response_model=InstructionResponse)
+async def drive(instruction: InstructionCreate):
+    """Creates a driving instruction and sends it to the robot"""
+    instruction = store_instruction(instruction)
+    send_instruction(instruction)
+
+    return instruction
 
 
 @app.post("/stop/")
