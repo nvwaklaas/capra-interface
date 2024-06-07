@@ -56,6 +56,8 @@ After completing the installation steps as described below and connecting to the
 - _Speed_ allows the user to set the driving speed in meters per second with a limit of 2 m/s.
 - _Distance_ allows the user to set the driving distance in meters.
 - _Steering angle_ allows the user to steer te robot where _1.5_ is the maximum leftward angle and _-0.8_ is the maximum rightward angle.
+- _Select instruction_ allows the user to select and send a previously stored driving instruction.
+- _Send custom instruction_ allows the user to send the instruction that is currently prepared in the Control Panel.
 
 ## Installation - Back-end
 
