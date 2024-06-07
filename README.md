@@ -75,6 +75,38 @@ Start API server
 uvicorn main:app
 ```
 
+## Installation - Front-end
+
+To install the Vue/Vite front-end, run the following commands:
+
+Build front-end
+
+```bash
+cd capra-frontend
+```
+
+```
+npm install
+```
+
+Build TailwindCSS
+
+```
+npx tailwindcss init -p
+```
+
+Start front-end server
+
+```
+npm run dev
+```
+
+Alternatively it is possible to expose the front-end to the local network by using the following command:
+
+```bash
+npm run dev -- --host
+```
+
 ## Installation - Docker Images
 
 ### API
@@ -117,38 +149,6 @@ docker-compose up --build
 ```
 
 You can add the flag `-d` to start the containers without showing their output.
-
-## Installation - Front-end
-
-To install the Vue/Vite front-end, run the following commands:
-
-Build front-end
-
-```bash
-cd capra-frontend
-```
-
-```
-npm install
-```
-
-Build TailwindCSS
-
-```
-npx tailwindcss init -p
-```
-
-Start front-end server
-
-```
-npm run dev
-```
-
-Alternatively it is possible to expose the front-end to the local network by using the following command:
-
-```bash
-npm run dev -- --host
-```
 
 ## Capra Hircus path file
 
