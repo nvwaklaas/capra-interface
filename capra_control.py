@@ -83,16 +83,22 @@ class ControlCapra():
 
     def calculate_distance_angle(self, coord_1: Coordinate, coord_2: Coordinate) -> dict:
         """Calculates the distance and angle between two coordinates using the Haversine formula."""
+
+        # Convert coordinates to radians
         lat1 = math.radians(coord_1[0])
         lon1 = math.radians(coord_1[1])
         lat2 = math.radians(coord_2[0])
         lon2 = math.radians(coord_2[1])
 
+        # Calculate deltas
         dlon = lon2 - lon1
         dlat = lat2 - lat1
 
+        # Haversine
         a = math.sin(dlat/2)**2 + math.cos(lat1) * \
             math.cos(lat2) * math.sin(dlon/2)**2
+
+        # Angle and distance between coordinates on three dimensional plane
         c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
         distance = R * c
 
@@ -123,7 +129,10 @@ class ControlCapra():
         return distances
 
     def send_instruction(self, speed: int, angle: float = 0.0) -> None:
-        """Used for remotely controlling Capra Hircus using odometry."""
+        """
+        Used for remotely controlling Capra Hircus using odometry.
+        Instructions should be send at a frenquency of 10Hz.
+        """
         instruction = DrivingInstruction(speed, angle)
         msg_json = json.dumps(instruction.get_formatted_instruction())
         try:
@@ -133,16 +142,13 @@ class ControlCapra():
             self.logger.error(
                 "An unexpected error occured during sending instruction: %s", e)
 
-    def remote_control(self, distance: float = 0.1, speed: int = 0, angle: float = 0.0) -> None:
+    def remote_control(self, distance: float = 0.1, speed: int = 1, angle: float = 0.0) -> None:
         """Instructs a Capra Hircus robot to drive for a given distance, with a given angle and speed."""
         frequency = 0.1  # 10 Hz
         distance_covered = 0.0
 
-        if speed == 0:
-            distance_per_instruction = 0.1
-            distance = 0.1
-        else:
-            distance_per_instruction = abs(speed) * frequency
+        # Get absolute value of speed to handle negative speed values
+        distance_per_instruction = abs(speed) * frequency
 
         while distance_covered < distance:
             self.send_instruction(speed, angle)
